@@ -1,0 +1,48 @@
+services:
+  # 1. Bot de Automatización RPA (Selenium Worker)
+  bot-siga:
+    build: .
+    container_name: bot_siga_contenedor
+    shm_size: '2gb' # Previene crasheos de Chrome Headless por falta de memoria
+    env_file:
+      - .env
+    volumes:
+      # RUTAS RELATIVAS: Funcionará en Windows, Mac o Linux sin importar el usuario
+      - ./output/SIGA_GESTION:/app/output/SIGA_GESTION
+      - ./input:/app/input
+    depends_on:
+      - dynamodb-local
+    networks:
+      - siga-network
+
+  # 2. Base de Datos DynamoDB Local con Almacenamiento Persistente
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    container_name: dynamodb_local_siga
+    ports:
+      - "8000:8000"
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    volumes:
+      - ./dynamodb_data:/home/dynamodblocal/data
+    networks:
+      - siga-network
+
+  # 3. Interfaz Gráfica Web para ver las Tablas y Resultados
+  dynamodb-admin:
+    image: aaronshaf/dynamodb-admin:latest
+    container_name: dynamodb_admin_siga
+    ports:
+      - "8001:8001"
+    environment:
+      - DYNAMO_ENDPOINT=http://dynamodb-local:8000
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=local
+      - AWS_SECRET_ACCESS_KEY=local
+    depends_on:
+      - dynamodb-local
+    networks:
+      - siga-network
+
+networks:
+  siga-network:
+    driver: bridge
