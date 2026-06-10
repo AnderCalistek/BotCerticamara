@@ -1,0 +1,46 @@
+# =========================
+# 1. Credenciales y Secretos
+# =========================
+.env
+*.pem
+*.key
+
+# =========================
+# 2. Archivos de Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.venv/
+
+# =========================
+# 3. Base de Datos (DynamoDB Local)
+# =========================
+# Ignoramos la carpeta del volumen y el archivo de SQLite local
+dynamodb_data/
+shared-local-instance.db
+
+# =========================
+# 4. Datos de Prueba y Archivos de los Bots (Selenium)
+# =========================
+# Ignoramos las carpetas donde el bot lee Excels y guarda PDFs
+input/
+output/
+*.xlsx
+*.csv
+*.pdf
+*.zip
+
+# =========================
+# 5. Basura del Sistema Operativo
+# =========================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# =========================
+# 6. Streamlit (Frontend)
+# =========================
+.streamlit/
